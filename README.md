@@ -2,7 +2,7 @@
 
 将 Claude Max 订阅转换为标准 Anthropic API 接口的本地代理网关。
 
-让你的第三方工具（如 Cursor、Cline 等）通过 Claude Max 订阅额度调用 Claude API，无需额外付费购买 API credits。
+让你的第三方工具（如 Cursor、OpenClaw 等）通过 Claude Max 订阅额度调用 Claude API，无需额外付费购买 API credits。
 
 > **请低调使用，不要大范围宣传。**
 
@@ -66,7 +66,7 @@ DEBUG=1 python3 proxy.py
 
 ## 关于 Extra Usage
 
-本项目的主要目的是让 Cline 等第三方工具用上 Claude Max/Pro 的订阅额度，因此建议在 [claude.ai/settings/usage](https://claude.ai/settings/usage) 中关闭 Extra Usage，避免产生额外费用。
+本项目的主要目的是让 OpenClaw 等第三方工具用上 Claude Max/Pro 的订阅额度，因此建议在 [claude.ai/settings/usage](https://claude.ai/settings/usage) 中关闭 Extra Usage，避免产生额外费用。
 
 如果遇到 `You're out of extra usage` 报错，说明该请求被 Anthropic 判定为第三方客户端。Anthropic 禁止第三方应用使用订阅额度，会强制走 Extra Usage 计费。目前默认的 13 个工具组合经过验证可以正常走订阅额度，不要随意增加工具数量。
 
