@@ -4,6 +4,8 @@
 
 让你的第三方工具（如 Cursor、Cline 等）通过 Claude Max 订阅额度调用 Claude API，无需额外付费购买 API credits。
 
+> **请低调使用，不要大范围宣传。**
+
 ## 原理
 
 ```
@@ -28,7 +30,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/你的用户名/claude-max-proxy.git
+git clone https://github.com/zhangbinhui/claude-max-proxy.git
 cd claude-max-proxy
 
 # 创建虚拟环境并安装依赖
@@ -62,9 +64,15 @@ DEBUG=1 python3 proxy.py
 
 将 API Base URL 设置为 `http://localhost:5678`，API Key 随意填写（代理会忽略并使用本地 OAuth token）。
 
+## 关于 Extra Usage
+
+本项目的主要目的是让 Cline 等第三方工具用上 Claude Max/Pro 的订阅额度，因此建议在 [claude.ai/settings/usage](https://claude.ai/settings/usage) 中关闭 Extra Usage，避免产生额外费用。
+
+如果遇到 `You're out of extra usage` 报错，说明该请求被 Anthropic 判定为第三方客户端。Anthropic 禁止第三方应用使用订阅额度，会强制走 Extra Usage 计费。目前默认的 13 个工具组合经过验证可以正常走订阅额度，不要随意增加工具数量。
+
 ## 工具过滤
 
-代理默认只保留 13 个核心工具，避免因工具数量过多被 Anthropic 识别为第三方客户端。可在 `proxy.py` 中修改 `KEEP_TOOLS` 集合，但请谨慎测试——工具数量/组合是 Anthropic 检测第三方应用的维度之一。
+代理默认只保留 13 个核心工具。工具的数量和组合是 Anthropic 检测第三方客户端的维度之一——当前的 13 个工具组合可正常使用订阅额度，但放开过多工具会触发第三方检测。如需修改 `KEEP_TOOLS` 集合，请逐个添加并测试。
 
 ## 注意事项
 
