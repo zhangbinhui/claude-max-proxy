@@ -12,10 +12,9 @@
 第三方客户端 → localhost:5678 → [请求处理] → api.anthropic.com
                                     ↓
                               - OAuth 认证注入
-                              - 工具列表过滤
-                              - 系统提示注入
+                              - 工具名称映射 (双向)
+                              - System Prompt 迁移
                               - CCH 签名计算
-                              - 关键词替换
 ```
 
 代理读取 Claude Code CLI 本地保存的 OAuth token，将请求伪装为 Claude Code CLI 发出，从而使用订阅额度而非 API credits。
@@ -66,19 +65,42 @@ DEBUG=1 python3 proxy.py
 
 ## 关于 Extra Usage
 
-本项目的主要目的是让 OpenClaw 等第三方工具用上 Claude Max/Pro 的订阅额度，因此建议在 [claude.ai/settings/usage](https://claude.ai/settings/usage) 中关闭 Extra Usage，避免产生额外费用。
+本项目的主要目的是让第三方工具用上 Claude Max/Pro 的订阅额度，因此建议在 [claude.ai/settings/usage](https://claude.ai/settings/usage) 中关闭 Extra Usage，避免产生额外费用。
 
-如果遇到 `You're out of extra usage` 报错，说明该请求被 Anthropic 判定为第三方客户端。Anthropic 禁止第三方应用使用订阅额度，会强制走 Extra Usage 计费。目前默认的 13 个工具组合经过验证可以正常走订阅额度，不要随意增加工具数量。
+如果遇到 `You're out of extra usage` 报错，说明该请求被 Anthropic 判定为第三方客户端，强制走 Extra Usage 计费。
 
-## 工具过滤
+## 工具名称映射
 
-代理默认只保留 13 个核心工具。工具的数量和组合是 Anthropic 检测第三方客户端的维度之一——当前的 13 个工具组合可正常使用订阅额度，但放开过多工具会触发第三方检测。如需修改 `KEEP_TOOLS` 集合，请逐个添加并测试。
+代理通过 `tool_name_mapping.json` 对工具名进行双向映射：
+
+- **请求方向**：第三方客户端的工具名 → Claude Code 原生工具名（如 `exec` → `Bash`，`read` → `Read`）
+- **响应方向**：Claude Code 返回的工具名 → 第三方客户端工具名（自动反向映射）
+- **移除不支持的工具**：`_remove` 列表中的工具会被直接丢弃（如 `canvas`、`browser` 等 Claude Code 不存在的工具）
+
+映射表分两类：
+- `direct`：功能直接对应的工具（如 `read` ↔ `Read`）
+- `borrowed`：借用 Claude Code 已有工具名的映射（如 `memory_search` → `Glob`），保留原始 schema 不变
+
+如需自定义，编辑 `tool_name_mapping.json` 即可。
+
+## System Prompt 处理
+
+Anthropic 通过 `system` 参数检测第三方应用。代理将原始 system prompt 迁移到第一条 user message 中（包裹在 `<system_instructions>` 标签内），`system` 参数只保留标准 Claude Code 格式（billing header + identity），从而绕过检测。
+
+## 参考文件
+
+| 文件 | 说明 |
+|------|------|
+| `cc_tools_baseline.json` | Claude Code 原生工具定义快照，用于对照映射 |
+| `cc_system_baseline.json` | Claude Code 原生 system prompt 快照，用于对照格式 |
+| `tool_name_mapping.json` | 工具名称映射配置 |
 
 ## 注意事项
 
 - 本项目仅供学习和研究用途
 - Token 依赖 Claude Code CLI 的本地凭证，请勿泄露 `~/.claude/.credentials.json`
 - Token 过期时代理会自动通过 `claude --print` 刷新
+- CC 版本号从本地 `claude --version` 自动检测，build 号可通过 `.cc_build` 文件缓存
 - 本项目由 Claude Opus 4.6 编写，遇到问题请咨询 AI
 
 ## License

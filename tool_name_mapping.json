@@ -1,0 +1,32 @@
+{
+  "_comment": "OpenClaw tool name → Claude Code tool name 映射表。请求时 OC→CC，响应时 CC→OC。基于 Claude Code 2.1.97 / CC tools baseline 2026-04-09",
+  "_remove": ["feishu_doc", "feishu_app_scopes", "feishu_chat", "feishu_wiki", "feishu_drive", "feishu_bitable_get_meta", "feishu_bitable_list_fields", "feishu_bitable_list_records", "feishu_bitable_get_record", "feishu_bitable_create_record", "feishu_bitable_update_record", "feishu_bitable_create_app", "feishu_bitable_create_field", "canvas", "browser", "image_generate"],
+  "direct": {
+    "read": "Read",
+    "edit": "Edit",
+    "write": "Write",
+    "exec": "Bash",
+    "web_search": "WebSearch",
+    "web_fetch": "WebFetch",
+    "cron": "CronCreate",
+    "process": "TaskOutput",
+    "message": "Agent"
+  },
+  "borrowed": {
+    "memory_search": "Glob",
+    "memory_get": "Grep",
+    "sessions_spawn": "EnterWorktree",
+    "sessions_yield": "ExitWorktree",
+    "sessions_send": "AskUserQuestion",
+    "sessions_list": "CronList",
+    "sessions_history": "TodoWrite",
+    "subagents": "TaskStop",
+    "session_status": "EnterPlanMode",
+    "agents_list": "ExitPlanMode",
+    "image": "NotebookEdit",
+    "pdf": "Skill",
+    "tts": "RemoteTrigger",
+    "gateway": "CronDelete",
+    "nodes": "mcp__claude_ai_Gmail__authenticate"
+  }
+}
